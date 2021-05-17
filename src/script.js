@@ -22,8 +22,6 @@ const scene = new THREE.Scene()
 /**
  * Loaders
  */
-// Texture loader
-const textureLoader = new THREE.TextureLoader()
 
 // Draco loader
 const dracoLoader = new DRACOLoader()
@@ -36,29 +34,31 @@ gltfLoader.setDRACOLoader(dracoLoader)
 /**
  * Materials
  */
-// Baked material
-const bakedMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
-const houseMaterial = new THREE.MeshBasicMaterial({ color: 0xFFBA68 })
-const trimMaterial = new THREE.MeshBasicMaterial({ color: 0xE7784B })
-const grassMaterial = new THREE.MeshBasicMaterial({ color: 0x9BE717 })
-const woodMaterial = new THREE.MeshBasicMaterial({ color: 0x63360A })
-const pathMaterial = new THREE.MeshBasicMaterial({ color: 0xC8C8C8 })
-const roofMaterial = new THREE.MeshBasicMaterial({ color: 0xA98156 })
-const glassMaterial = new THREE.MeshBasicMaterial({ color: 0xE4FFA5 })
-const doorKnobMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFE17 })
-
-
+const bakedMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 })
+const houseMaterial = new THREE.MeshStandardMaterial({ color: 0xFFBA68 })
+const trimMaterial = new THREE.MeshStandardMaterial({ color: 0xE7784B })
+const grassMaterial = new THREE.MeshStandardMaterial({ color: 0x9BE717 })
+const woodMaterial = new THREE.MeshStandardMaterial({ color: 0x63360A })
+const pathMaterial = new THREE.MeshStandardMaterial({ color: 0xC8C8C8 })
+const roofMaterial = new THREE.MeshStandardMaterial({ color: 0xA98156 })
+const glassMaterial = new THREE.MeshStandardMaterial({ color: 0xE4FFA5 })
+const doorKnobMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFE17 })
+const sunMaterial = new THREE.MeshStandardMaterial({ color: 0xE79900 })
 
 /**
  * Model
  */
+
+const houseObjects = {
+
+}
+
  gltfLoader.load(
     'house.glb',
     (gltf) =>
     {
 
         scene.add(gltf.scene)
-
 
         const grass = gltf.scene.children.find((child) => child.name === 'Grass')
         grass.material = grassMaterial
@@ -84,22 +84,36 @@ const doorKnobMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFE17 })
         const doorKnob = gltf.scene.children.find((child) => child.name === 'DoorKnob')
         doorKnob.material = doorKnobMaterial
 
+        const sun = gltf.scene.children.find((child) => child.name === 'Sun')
+        sun.material = sunMaterial
+        houseObjects.sun = sun
+
         const roof = gltf.scene.children.find((child) => child.name === 'Roof')
         roof.material = roofMaterial
         console.log( gltf.scene.children)
-
     }
 )
 
 /**
- * Object
+ * Lights
  */
-const cube = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshBasicMaterial()
-)
+const pointLight = new THREE.PointLight( 0xffffff, 1, 100 );
+pointLight.position.set( 10, 10, 10 );
+scene.add( pointLight );
+gui.add(pointLight, 'intensity').min(0).max(1).step(0.001).name('Point Light')
 
-scene.add(cube)
+const hemisphereLight = new THREE.HemisphereLight(0xff0000, 0x0000ff, 0.3)
+scene.add(hemisphereLight)
+gui.add(hemisphereLight, 'intensity').min(0).max(1).step(0.001).name('Hemisphere Light')
+
+/**
+ * Clearcolor
+ */
+const skyColor = {
+    color: '0x0000ff'
+}
+
+
 
 /**
  * Sizes
@@ -157,11 +171,15 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
 
+
     // Update controls
     controls.update()
 
     // Render
     renderer.render(scene, camera)
+
+    //Udpate sky color
+    renderer.clearColor = skyColor.color
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
