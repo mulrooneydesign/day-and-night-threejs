@@ -4,8 +4,8 @@ import * as THREE from 'three'
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
-import { MeshToonMaterial } from 'three'
-
+import vertexShader from '../shaders/sky/vertex.glsl'
+import fragmentShader from '../shaders/sky/fragment.glsl'
 
 /**
  * Base
@@ -36,7 +36,7 @@ gltfLoader.setDRACOLoader(dracoLoader)
 /**
  * Materials
  */
-const bakedMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 })
+
 const houseMaterial = new THREE.MeshStandardMaterial({ color: 0xFFBA68 })
 const trimMaterial = new THREE.MeshStandardMaterial({ color: 0xE7784B })
 const grassMaterial = new THREE.MeshStandardMaterial({ color: 0x9BE717 })
@@ -49,7 +49,7 @@ const sunMaterial = new THREE.MeshStandardMaterial({ color: 0xE79900 })
 const moonMaterial = new THREE.MeshBasicMaterial({ color: 0x71b6f2 })
 
 /**
- * Model
+ * Parameters
  */
 
 const parameters = {
@@ -58,8 +58,29 @@ const parameters = {
     sunAngle: - Math.PI * 0.5
 }
 
+const uniforms = {
+    uSunAngle: { value: parameters.sunAngle }
+}
 
 
+/**
+ * Custom Materials
+ */
+const skyMaterial = new THREE.ShaderMaterial({
+    vertexShader: vertexShader,
+    fragmentShader: fragmentShader,
+    uniforms: uniforms    
+})
+
+
+
+
+
+console.log(skyMaterial)
+
+/**
+ * Model
+ */
 
  gltfLoader.load(
     'house_extended.glb',
@@ -67,6 +88,11 @@ const parameters = {
     {
 
         scene.add(gltf.scene)
+
+        const sky = gltf.scene.children.find((child) => child.name === 'Sky')
+        sky.receiveShadow = false
+        sky.castShadow = false
+        sky.material = skyMaterial
 
         const grass = gltf.scene.children.find((child) => child.name === 'Grass')
         grass.material = grassMaterial
@@ -112,7 +138,7 @@ const parameters = {
         sun.material = sunMaterial
         parameters.sun = sun
         parameters.sun.receiveShadow = true
-        parameters.sun.castShadow = true
+
 
         const moon = gltf.scene.children.find((child) => child.name === 'Moon')
         moon.material = moonMaterial
@@ -125,7 +151,6 @@ const parameters = {
         roof.material = roofMaterial
         roof.receiveShadow = true
         roof.castShadow = true
-        console.log( gltf.scene.children)
     }
 )
 
@@ -134,21 +159,25 @@ const parameters = {
  */
 const sunLight = new THREE.PointLight( 0xffffff )
 sunLight.castShadow = true
-sunLight.position.x = 6
+sunLight.position.x = 8
 scene.add( sunLight )
 
 const moonLight = new THREE.PointLight( 0x0000ff )
 moonLight.castShadow = true
-moonLight.position.x = 6
+moonLight.position.x = 8
+
 scene.add( moonLight )
 
 
-const pointLightHelper = new THREE.PointLightHelper( moonLight, 1 )
-scene.add( pointLightHelper )
+// const pointLightHelper = new THREE.PointLightHelper( moonLight, 1 )
+// scene.add( pointLightHelper )
 
 
 const ambientLight = new THREE.AmbientLight( 0xffffff, 0.05 )
 scene.add( ambientLight )
+
+const light = new THREE.HemisphereLight( 0x1f33, 0x220b00, 0.5 );
+scene.add( light );
 
 
 /**
@@ -157,8 +186,6 @@ scene.add( ambientLight )
 const skyColor = {
     color: '0x0000ff'
 }
-
-
 
 /**
  * Sizes
@@ -187,7 +214,7 @@ window.addEventListener('resize', () =>
  * Camera
  */
 // Base camera
-const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 100)
+const camera = new THREE.PerspectiveCamera(45, sizes.width / sizes.height, 0.1, 200)
 camera.position.x = -20
 camera.position.y = 10
 camera.position.z = 14
@@ -225,7 +252,7 @@ const tick = () =>
     // Render
     renderer.render(scene, camera)
 
-    //
+    //Sun Angle
     const sunAngle = parameters.sunAngle
 
     if(parameters.sun) {
@@ -241,7 +268,7 @@ const tick = () =>
         sunLight.intensity = Math.cos(sunAngle)
 
         //Moon Settings
-
+        parameters.moon.rotation.z -= 0.01 
         parameters.moon.position.z = - parameters.sunDistance * Math.sin(sunAngle)
         parameters.moon.position.y = - parameters.sunDistance *  Math.cos(sunAngle)
 
@@ -250,17 +277,15 @@ const tick = () =>
 
         moonLight.intensity = 10
 
-        //Ambient Light
-        ambientLight.intensity  = Math.cos(sunAngle)
-
-
     }
 
-    //Sun animation
+    // //Udate Uniforms
+    uniforms.uSunAngle.value = parameters.sunAngle / Math.PI
 
 
-    //Udpate sky color
-    renderer.setClearColor(new THREE.Color(parameters.color));
+    //Ambient Light
+    ambientLight.intensity  = Math.cos(sunAngle)
+
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
@@ -268,16 +293,18 @@ const tick = () =>
 
 tick()
 
-
 //Debug Objects
-gui.addColor(parameters, 'color').onChange(()=>{
-    renderer.setClearColor(new THREE.Color(parameters.color));
-})
+// gui.addColor(parameters, 'color').onChange(()=>{
+//     renderer.setClearColor(new THREE.Color(parameters.color));
+// })
 
-gui.add(parameters, 'sunAngle').min(- Math.PI * 2).max(Math.PI * 2).step(0.001).name('Sun Angle')
+gui.add(parameters, 'sunAngle').min(- Math.PI).max(Math.PI).step(0.001).name('Sun Angle').onFinishChange(
+    () => {
+        console.log(skyMaterial.uniforms.uSunAngle)
+    }
+)
 
-gui.add(parameters, 'sunDistance').min(0).max(20).step(0.001).name('Sun Distance')
-gui.add(sunLight, 'intensity').min(0).max(10).step(0.001).name('Point Light')
-gui.add(sunLight.position, 'x').min(0).max(20).step(0.001).name('Sunlight Position X')
-gui.add(sunLight.position, 'y').min(0).max(20).step(0.001).name('Sunlight Position Y')
-gui.add(sunLight.position, 'z').min(0).max(20).step(0.001).name('Sunlight Position Z')
+//gui.add(parameters, 'sunDistance').min(0).max(20).step(0.001).name('Sun Distance')
+// gui.add(sunLight.position, 'x').min(0).max(20).step(0.001).name('Sunlight Position X')
+// gui.add(sunLight.position, 'y').min(0).max(20).step(0.001).name('Sunlight Position Y')
+// gui.add(sunLight.position, 'z').min(0).max(20).step(0.001).name('Sunlight Position Z')
