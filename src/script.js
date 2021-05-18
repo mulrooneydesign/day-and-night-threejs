@@ -238,9 +238,10 @@ effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 effectComposer.setSize(sizes.width, sizes.height)
 
 const bloomPass = new UnrealBloomPass()
-bloomPass.strength = 2.1
-bloomPass.radius = 0.8
-bloomPass.threshold = 0.8
+bloomPass.enabled = true
+bloomPass.strength = 0.182
+bloomPass.radius = 2
+bloomPass.threshold = 0.891
 
 const renderPass = new RenderPass(scene, camera)
 
@@ -313,3 +314,9 @@ gui.add(parameters, 'sunAngle').min(- Math.PI).max(Math.PI).step(0.001).name('Su
         console.log(skyMaterial.uniforms.uSunAngle)
     }
 )
+
+
+gui.add(bloomPass, 'enabled')
+gui.add(bloomPass, 'strength').min(0).max(2).step(0.001)
+gui.add(bloomPass, 'radius').min(0).max(2).step(0.001)
+gui.add(bloomPass, 'threshold').min(0).max(1).step(0.001)
