@@ -72,16 +72,9 @@ const skyMaterial = new THREE.ShaderMaterial({
     uniforms: uniforms    
 })
 
-
-
-
-
-console.log(skyMaterial)
-
 /**
  * Model
  */
-
  gltfLoader.load(
     'house_extended.glb',
     (gltf) =>
@@ -167,11 +160,6 @@ moonLight.castShadow = true
 moonLight.position.x = 8
 
 scene.add( moonLight )
-
-
-// const pointLightHelper = new THREE.PointLightHelper( moonLight, 1 )
-// scene.add( pointLightHelper )
-
 
 const ambientLight = new THREE.AmbientLight( 0xffffff, 0.05 )
 scene.add( ambientLight )
@@ -279,7 +267,7 @@ const tick = () =>
 
     }
 
-    // //Udate Uniforms
+    //Udate Uniforms
     uniforms.uSunAngle.value = parameters.sunAngle / Math.PI
 
 
@@ -293,18 +281,9 @@ const tick = () =>
 
 tick()
 
-//Debug Objects
-// gui.addColor(parameters, 'color').onChange(()=>{
-//     renderer.setClearColor(new THREE.Color(parameters.color));
-// })
-
+//GUI 
 gui.add(parameters, 'sunAngle').min(- Math.PI).max(Math.PI).step(0.001).name('Sun Angle').onFinishChange(
     () => {
         console.log(skyMaterial.uniforms.uSunAngle)
     }
 )
-
-//gui.add(parameters, 'sunDistance').min(0).max(20).step(0.001).name('Sun Distance')
-// gui.add(sunLight.position, 'x').min(0).max(20).step(0.001).name('Sunlight Position X')
-// gui.add(sunLight.position, 'y').min(0).max(20).step(0.001).name('Sunlight Position Y')
-// gui.add(sunLight.position, 'z').min(0).max(20).step(0.001).name('Sunlight Position Z')
