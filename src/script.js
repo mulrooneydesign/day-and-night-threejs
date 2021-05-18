@@ -7,6 +7,10 @@ import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import vertexShader from '../shaders/sky/vertex.glsl'
 import fragmentShader from '../shaders/sky/fragment.glsl'
 
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
+
 /**
  * Base
  */
@@ -213,6 +217,8 @@ scene.add(camera)
 // const controls = new OrbitControls(camera, canvas)
 // controls.enableDamping = true
 
+
+
 /**
  * Renderer
  */
@@ -223,6 +229,25 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setSize(sizes.width, sizes.height)
 renderer.shadowMap.enabled = true
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+
+/**
+ * Post processing
+ */
+const effectComposer = new EffectComposer(renderer)
+effectComposer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+effectComposer.setSize(sizes.width, sizes.height)
+
+const bloomPass = new UnrealBloomPass()
+bloomPass.strength = 2.1
+bloomPass.radius = 0.8
+bloomPass.threshold = 0.8
+
+const renderPass = new RenderPass(scene, camera)
+
+effectComposer.addPass(renderPass)
+effectComposer.addPass(bloomPass)
+
+
 
 /**
  * Animate
@@ -238,7 +263,8 @@ const tick = () =>
     // controls.update()
 
     // Render
-    renderer.render(scene, camera)
+    //renderer.render(scene, camera)
+    effectComposer.render()
 
     //Sun Angle
     const sunAngle = parameters.sunAngle
