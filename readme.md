@@ -1,4 +1,4 @@
-# Three.js Journey
+# Turn Day into Night with THREE.js
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
