@@ -49,7 +49,7 @@ const pathMaterial = new THREE.MeshStandardMaterial({ color: 0xC8C8C8 })
 const roofMaterial = new THREE.MeshStandardMaterial({ color: 0xA98156 })
 const glassMaterial = new THREE.MeshStandardMaterial({ color: 0xE4FFA5 })
 const doorKnobMaterial = new THREE.MeshStandardMaterial({ color: 0xFFFE17 })
-const sunMaterial = new THREE.MeshStandardMaterial({ color: 0xE79900 })
+const sunMaterial = new THREE.MeshStandardMaterial({ color: 0xE79900, emissive: 0xE79900 })
 const moonMaterial = new THREE.MeshBasicMaterial({ color: 0x71b6f2 })
 
 /**
@@ -86,65 +86,67 @@ const skyMaterial = new THREE.ShaderMaterial({
 
         scene.add(gltf.scene)
 
-        const sky = gltf.scene.children.find((child) => child.name === 'Sky')
+        const modelChildren = gltf.scene.children
+
+        const sky = modelChildren.find((child) => child.name === 'Sky')
         sky.receiveShadow = false
         sky.castShadow = false
         sky.material = skyMaterial
 
-        const grass = gltf.scene.children.find((child) => child.name === 'Grass')
+        const grass = modelChildren.find((child) => child.name === 'Grass')
         grass.material = grassMaterial
         grass.receiveShadow = true
         grass.castShadow = true
 
-        const house = gltf.scene.children.find((child) => child.name === 'House')
+        const house = modelChildren.find((child) => child.name === 'House')
         house.material = houseMaterial
         house.receiveShadow = true
         house.castShadow = true
 
-        const door = gltf.scene.children.find((child) => child.name === 'Door')
+        const door = modelChildren.find((child) => child.name === 'Door')
         door.material = trimMaterial
         door.receiveShadow = true
         door.castShadow = true
 
-        const window = gltf.scene.children.find((child) => child.name === 'Window')
+        const window = modelChildren.find((child) => child.name === 'Window')
         window.material = trimMaterial
         window.receiveShadow = true
         window.castShadow = true
 
-        const path = gltf.scene.children.find((child) => child.name === 'Path')
+        const path = modelChildren.find((child) => child.name === 'Path')
         path.material = pathMaterial
         path.receiveShadow = true
         path.castShadow = true
 
-        const wood = gltf.scene.children.find((child) => child.name === 'Wood')
+        const wood = modelChildren.find((child) => child.name === 'Wood')
         wood.material = woodMaterial
         wood.receiveShadow = true
         wood.castShadow = true
 
-        const glass = gltf.scene.children.find((child) => child.name === 'Glass')
+        const glass = modelChildren.find((child) => child.name === 'Glass')
         glass.material = glassMaterial
         glass.receiveShadow = true
         glass.castShadow = true
 
-        const doorKnob = gltf.scene.children.find((child) => child.name === 'DoorKnob')
+        const doorKnob = modelChildren.find((child) => child.name === 'DoorKnob')
         doorKnob.material = doorKnobMaterial
         doorKnob.receiveShadow = true
         doorKnob.castShadow = true
 
-        const sun = gltf.scene.children.find((child) => child.name === 'Sun')
+        const sun = modelChildren.find((child) => child.name === 'Sun')
         sun.material = sunMaterial
         parameters.sun = sun
         parameters.sun.receiveShadow = true
 
 
-        const moon = gltf.scene.children.find((child) => child.name === 'Moon')
+        const moon = modelChildren.find((child) => child.name === 'Moon')
         moon.material = moonMaterial
         parameters.moon = moon
 
-        const cloud = gltf.scene.children.find((child) => child.name === 'Cloud')
+        const cloud = modelChildren.find((child) => child.name === 'Cloud')
         cloud.material = pathMaterial
 
-        const roof = gltf.scene.children.find((child) => child.name === 'Roof')
+        const roof = modelChildren.find((child) => child.name === 'Roof')
         roof.material = roofMaterial
         roof.receiveShadow = true
         roof.castShadow = true
@@ -173,11 +175,9 @@ scene.add( light );
 
 
 /**
- * Clearcolor
+ * Stars
  */
-const skyColor = {
-    color: '0x0000ff'
-}
+
 
 /**
  * Sizes
@@ -259,7 +259,6 @@ const tick = () =>
 {
     const elapsedTime = clock.getElapsedTime()
 
-
     // Update controls
     // controls.update()
 
@@ -296,6 +295,9 @@ const tick = () =>
 
     //Udate Uniforms
     uniforms.uSunAngle.value = parameters.sunAngle / Math.PI
+
+    //Get Hour
+    const hour = new Date().getHours();
 
 
     //Ambient Light
