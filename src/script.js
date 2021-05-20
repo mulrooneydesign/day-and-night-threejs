@@ -24,7 +24,6 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-
 /**
  * Materials
  */
@@ -244,7 +243,7 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
 
     // Update controls
-    // controls.update()
+    controls.update()
 
     // Render
     //renderer.render(scene, camera)
