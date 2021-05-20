@@ -47,7 +47,7 @@ const moonMaterial = new THREE.MeshBasicMaterial({ color: 0x71b6f2 })
 const parameters = {
     color: 0x1722,
     sunDistance: 10,
-    sunAngle: - Math.PI * 0.5
+    sunAngle: - 0.369
 }
 
 const uniforms = {
