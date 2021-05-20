@@ -1,5 +1,7 @@
 # Turn Day into Night with THREE.js
 
+[Demo on Netlify](https://hungry-lumiere-8a5e2f.netlify.app/)
+
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
 Run this followed commands:

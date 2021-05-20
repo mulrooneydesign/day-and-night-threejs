@@ -293,12 +293,7 @@ const tick = () =>
 tick()
 
 //GUI 
-gui.add(parameters, 'sunAngle').min(- Math.PI).max(Math.PI).step(0.001).name('Sun Angle').onFinishChange(
-    () => {
-        console.log(skyMaterial.uniforms.uSunAngle)
-    }
-)
-
+gui.add(parameters, 'sunAngle').min(- Math.PI).max(Math.PI).step(0.001).name('Sun Angle')
 
 gui.add(bloomPass, 'enabled')
 gui.add(bloomPass, 'strength').min(0).max(2).step(0.001)
