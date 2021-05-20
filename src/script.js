@@ -88,68 +88,52 @@ gltfLoader.setDRACOLoader(dracoLoader)
 
         const modelChildren = gltf.scene.children
 
+        gltf.scene.traverse((child) => { 
+            child.receiveShadow = true
+            child.castShadow = true
+        })
+
         const sky = modelChildren.find((child) => child.name === 'Sky')
-        sky.receiveShadow = false
-        sky.castShadow = false
         sky.material = skyMaterial
 
         const grass = modelChildren.find((child) => child.name === 'Grass')
         grass.material = grassMaterial
-        grass.receiveShadow = true
-        grass.castShadow = true
 
         const house = modelChildren.find((child) => child.name === 'House')
         house.material = houseMaterial
-        house.receiveShadow = true
-        house.castShadow = true
-
+  
         const door = modelChildren.find((child) => child.name === 'Door')
         door.material = trimMaterial
-        door.receiveShadow = true
-        door.castShadow = true
 
         const window = modelChildren.find((child) => child.name === 'Window')
         window.material = trimMaterial
-        window.receiveShadow = true
-        window.castShadow = true
 
         const path = modelChildren.find((child) => child.name === 'Path')
         path.material = pathMaterial
-        path.receiveShadow = true
-        path.castShadow = true
 
         const wood = modelChildren.find((child) => child.name === 'Wood')
         wood.material = woodMaterial
-        wood.receiveShadow = true
-        wood.castShadow = true
 
         const glass = modelChildren.find((child) => child.name === 'Glass')
         glass.material = glassMaterial
-        glass.receiveShadow = true
-        glass.castShadow = true
 
         const doorKnob = modelChildren.find((child) => child.name === 'DoorKnob')
         doorKnob.material = doorKnobMaterial
-        doorKnob.receiveShadow = true
-        doorKnob.castShadow = true
 
         const sun = modelChildren.find((child) => child.name === 'Sun')
         sun.material = sunMaterial
         parameters.sun = sun
         parameters.sun.receiveShadow = true
 
-
         const moon = modelChildren.find((child) => child.name === 'Moon')
         moon.material = moonMaterial
         parameters.moon = moon
-
+        
         const cloud = modelChildren.find((child) => child.name === 'Cloud')
         cloud.material = pathMaterial
 
         const roof = modelChildren.find((child) => child.name === 'Roof')
         roof.material = roofMaterial
-        roof.receiveShadow = true
-        roof.castShadow = true
     }
 )
 
