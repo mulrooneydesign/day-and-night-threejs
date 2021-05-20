@@ -1,12 +1,11 @@
 import './style.css'
 import * as dat from 'dat.gui'
 import * as THREE from 'three'
-//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 import vertexShader from '../shaders/sky/vertex.glsl'
 import fragmentShader from '../shaders/sky/fragment.glsl'
-
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js'
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js'
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass'
@@ -25,17 +24,6 @@ const canvas = document.querySelector('canvas.webgl')
 // Scene
 const scene = new THREE.Scene()
 
-/**
- * Loaders
- */
-
-// Draco loader
-const dracoLoader = new DRACOLoader()
-dracoLoader.setDecoderPath('draco/')
-
-// GLTF loader
-const gltfLoader = new GLTFLoader()
-gltfLoader.setDRACOLoader(dracoLoader)
 
 /**
  * Materials
@@ -75,6 +63,18 @@ const skyMaterial = new THREE.ShaderMaterial({
     fragmentShader: fragmentShader,
     uniforms: uniforms    
 })
+
+/**
+ * Loaders
+ */
+
+// Draco loader
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('draco/')
+
+// GLTF loader
+const gltfLoader = new GLTFLoader()
+gltfLoader.setDRACOLoader(dracoLoader)
 
 /**
  * Model
@@ -175,11 +175,6 @@ scene.add( light );
 
 
 /**
- * Stars
- */
-
-
-/**
  * Sizes
  */
 const sizes = {
@@ -214,10 +209,8 @@ camera.lookAt(new THREE.Vector3(0,0,0))
 scene.add(camera)
 
 // Controls
-// const controls = new OrbitControls(camera, canvas)
-// controls.enableDamping = true
-
-
+const controls = new OrbitControls(camera, canvas)
+controls.enableDamping = true
 
 /**
  * Renderer
@@ -302,7 +295,6 @@ const tick = () =>
 
     //Ambient Light
     ambientLight.intensity  = Math.cos(sunAngle)
-
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
