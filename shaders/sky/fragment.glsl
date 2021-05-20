@@ -1,7 +1,7 @@
 uniform float uSunAngle;
 
 vec3 DayColor = vec3(0.2941, 0.2824, 0.9765);
-vec3 NightColor = vec3(0.1412, 0.0, 0.3333);
+vec3 NightColor = vec3(0.051, 0.0, 0.1216);
 
 void main() {
     vec3 color = vec3(0.0);

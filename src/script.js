@@ -143,12 +143,19 @@ gltfLoader.setDRACOLoader(dracoLoader)
 const sunLight = new THREE.PointLight( 0xffffff )
 sunLight.castShadow = true
 sunLight.position.x = 8
+sunLight.shadow.mapSize.width = 1024 * 2; // default
+sunLight.shadow.mapSize.height = 1024 * 2; // default
+sunLight.shadow.camera.near = 0.5; // default
+sunLight.shadow.camera.far = 500; // default
 scene.add( sunLight )
 
 const moonLight = new THREE.PointLight( 0x0000ff )
 moonLight.castShadow = true
 moonLight.position.x = 8
-
+moonLight.shadow.mapSize.width = 1024 * 2;
+moonLight.shadow.mapSize.height = 1024 * 2;
+moonLight.shadow.camera.near = 0.5;
+moonLight.shadow.camera.far = 500;
 scene.add( moonLight )
 
 const ambientLight = new THREE.AmbientLight( 0xffffff, 0.05 )
@@ -276,9 +283,8 @@ const tick = () =>
     //Get Hour
     const hour = new Date().getHours();
 
-
     //Ambient Light
-    ambientLight.intensity  = Math.cos(sunAngle)
+    ambientLight.intensity  = Math.cos(sunAngle) * 0.45
 
     // Call tick again on the next frame
     window.requestAnimationFrame(tick)
